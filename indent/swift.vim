@@ -199,9 +199,27 @@ function! SwiftIndent(...)
   endif
 
   if numCloseParens > 0
+    if numOpenBrackets > numCloseBrackets
+      " eg: multiline func: func (\n) {
+      if currentCloseBrackets > currentOpenBrackets || line =~ "\\v^\\s*}"
+        let column = col(".")
+        call cursor(line("."), 1)
+        let openingBracket = searchpair("{", "", "}", "bWn", "s:IsExcludedFromIndent()")
+        call cursor(line("."), column)
+        if openingBracket == 0
+          return -1
+        else
+          return indent(openingBracket)
+        endif
+      endif
+      return previousIndent + shiftwidth()
+    endif
+
     if currentOpenBrackets > 0 || currentCloseBrackets > 0
       if currentOpenBrackets > 0
+          echom 'open brack'
         if numOpenBrackets > numCloseBrackets
+            echom 'return'
           return previousIndent + shiftwidth()
         endif
 
