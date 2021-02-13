@@ -110,6 +110,11 @@ function! SwiftIndent(...)
     return indent(switch)
   elseif previous =~ ":$" && (previous =~ '^\s*case\W' || previous =~ '^\s*default\W')
     return previousIndent + shiftwidth()
+  elseif previous =~ '\v%(if|guard)$'
+    return previousIndent + shiftwidth()
+  elseif line =~ '^\s*else'
+    let cond = search("guard", "bWn", 0, 0, "s:IsExcludedFromIndent()")
+    return indent(cond)
   endif
 
   if numOpenParens == numCloseParens
@@ -184,6 +189,9 @@ function! SwiftIndent(...)
       let openingParen = searchpair("(", "", ")", "bWn", "s:IsExcludedFromIndent()")
       call cursor(line, column)
       return indent(openingParen)
+    elseif line =~ '^\s*{'
+        let cond = search("if", "bWn", line('.') - 30, 0, "s:IsExcludedFromIndent()")
+        return indent(cond)
     else
       " - Current line is blank, and the user presses 'o'
       return previousIndent
