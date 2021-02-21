@@ -6,7 +6,7 @@
 if exists("current_compiler")
     finish
 endif
-let current_compiler = "swift"
+let current_compiler = "swiftc"
 
 " vint: -ProhibitAbbreviationOption
 let s:save_cpo = &cpo
@@ -18,9 +18,9 @@ if exists(":CompilerSet") != 2
 endif
 
 if has('patch-7.4.191')
-    CompilerSet makeprg=swift\ \%:S
+    CompilerSet makeprg=swiftc\ \%:S
 else
-    CompilerSet makeprg=swift\ \%
+    CompilerSet makeprg=swiftc\ \%
 endif
 
 CompilerSet errorformat=
